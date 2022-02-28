@@ -1,0 +1,29 @@
+.root{
+    -fx-font-size: 18;
+    -fx-background-image: url("/image/1.jpg");
+}
+
+.button {
+    -fx-background-color: gold;
+
+}
+
+.button:hover {
+    -fx-background-color: #ffbb00;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+#btnAdd{
+    -fx-background-color: chartreuse
+}
+
+#btnAdd:hover {
+    -fx-background-color: #55a500;
+
+}
+
+.text-area {
+     -fx-control-inner-background: #f4f1bd;
+     -fx-text-fill: blue;
+     -fx-highlight-text-fill: aqua;
+}
