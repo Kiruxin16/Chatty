@@ -55,17 +55,31 @@ public class ClientHandler {
                                 }
                             }
 
+
                         }
                     }
 
                     //цикл работы
                     while (authenticated) {
                         String str = in.readUTF();
-                        if (str.equals("/end")) {
-                            sendMsg("/end");
-                            break;
+                        if (str.startsWith("/")) {
+                            if (str.equals("/end")) {
+                                sendMsg("/end");
+                                break;
+                            }
+                            if (str.startsWith("/w")) {
+                                String[] temp = str.split(" ", 3);
+                                if (temp.length<3){
+                                    continue;
+                                }
+                                server.whisperMsg(this,temp[1],temp[2]);
+
+                            }
+                        } else {
+                            server.broadcastMsg(this, str);
                         }
-                        server.broadcastMsg(this, str);
+
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

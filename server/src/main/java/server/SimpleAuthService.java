@@ -39,4 +39,14 @@ public class SimpleAuthService implements AuthService {
         }
         return null;
     }
+    @Override
+    public boolean isNameExist(String name){
+        for (UserData u:users) {
+            if(u.nickname.equals(name)){
+                return true;
+            }
+
+        }
+        return  false;
+    }
 }

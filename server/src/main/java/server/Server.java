@@ -60,6 +60,28 @@ public class Server {
         }
     }
 
+    public void whisperMsg(ClientHandler sender, String recipient, String msg) {
+        boolean isOnline=false;
+        if (authService.isNameExist(recipient)) {
+            for (ClientHandler c : clients) {
+                if (c.getNickname().equals(recipient)) {
+                    String message = String.format("[%s] to: %s %s", sender.getNickname(), recipient, msg);
+                    sender.sendMsg(message);
+                    message = String.format("from %s: %s", sender.getNickname(), msg);
+                    c.sendMsg(message);
+                    isOnline=true;
+                }
+
+            }
+            if(!isOnline){
+                sender.sendMsg("Пользователь не в сети");
+            }
+        } else sender.sendMsg("Пользователь не найден");
+
+    }
+
+
+
 
     public void subscribe(ClientHandler clientHandler){
         clients.add(clientHandler);
