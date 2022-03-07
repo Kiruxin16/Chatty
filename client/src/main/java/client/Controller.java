@@ -73,6 +73,7 @@ public class Controller implements Initializable {
         if(!authenticated){
             nickname = "";
         }
+
         textArea.clear();
         setTitle(nickname);
     }
