@@ -1,5 +1,7 @@
 package server;
 
+import constants.Command;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -60,14 +62,65 @@ public class Server {
         }
     }
 
+    public void whisperMsg(ClientHandler sender, String recipient, String msg) {
+        boolean isOnline=false;
+        if (authService.isNameExist(recipient)) {
+            for (ClientHandler c : clients) {
+                if (c.getNickname().equals(recipient)) {
+                    String message = String.format("[%s] to: %s %s", sender.getNickname(), recipient, msg);
+                    sender.sendMsg(message);
+                    message = String.format("from %s: %s", sender.getNickname(), msg);
+                    c.sendMsg(message);
+                    isOnline=true;
+                }
+
+            }
+            if(!isOnline){
+                sender.sendMsg("Пользователь не в сети");
+            }
+        } else sender.sendMsg("Пользователь не найден");
+    }
+
+    public void broadcastClientList(){
+        StringBuilder sb = new StringBuilder(Command.CLIENT_LIST);
+
+        for(ClientHandler c: clients){
+            sb.append(" ").append(c.getNickname());
+        }
+        String msg =sb.toString();
+
+        for(ClientHandler c: clients) {
+            c.sendMsg(msg);
+        }
+
+
+
+
+    }
+
+
+
+    public boolean isLoginAuthenticated(String login){
+        for (ClientHandler c:clients){
+            if(c.getLogin().equals(login)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
 
     public void subscribe(ClientHandler clientHandler){
         clients.add(clientHandler);
+        broadcastClientList();
     };
 
 
     public void unsubscribe(ClientHandler clientHandler){
         clients.remove(clientHandler);
+        broadcastClientList();
     };
 
     public AuthService getAuthService() {
