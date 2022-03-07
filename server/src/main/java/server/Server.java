@@ -1,5 +1,7 @@
 package server;
 
+import constants.Command;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -77,7 +79,34 @@ public class Server {
                 sender.sendMsg("Пользователь не в сети");
             }
         } else sender.sendMsg("Пользователь не найден");
+    }
 
+    public void broadcastClientList(){
+        StringBuilder sb = new StringBuilder(Command.CLIENT_LIST);
+
+        for(ClientHandler c: clients){
+            sb.append(" ").append(c.getNickname());
+        }
+        String msg =sb.toString();
+
+        for(ClientHandler c: clients) {
+            c.sendMsg(msg);
+        }
+
+
+
+
+    }
+
+
+
+    public boolean isLoginAuthenticated(String login){
+        for (ClientHandler c:clients){
+            if(c.getLogin().equals(login)){
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -85,11 +114,13 @@ public class Server {
 
     public void subscribe(ClientHandler clientHandler){
         clients.add(clientHandler);
+        broadcastClientList();
     };
 
 
     public void unsubscribe(ClientHandler clientHandler){
         clients.remove(clientHandler);
+        broadcastClientList();
     };
 
     public AuthService getAuthService() {
