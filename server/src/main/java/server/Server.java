@@ -20,7 +20,7 @@ public class Server {
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-        authService = new SimpleAuthService();
+        authService = new DBAuthService();
 
         try {
             Server.server = new ServerSocket(PORT);
