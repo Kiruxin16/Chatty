@@ -99,6 +99,11 @@ public class Server {
     }
 
 
+    public boolean userNameChange(String oldName, String newName) {
+
+        return authService.changeName(oldName, newName);
+
+    }
 
     public boolean isLoginAuthenticated(String login){
         for (ClientHandler c:clients){

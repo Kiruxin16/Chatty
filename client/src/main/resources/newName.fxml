@@ -6,22 +6,19 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Label?>
-<VBox fx:controller="client.RegController"
+<VBox fx:controller="client.NewNameController"
       xmlns:fx="http://javafx.com/fxml" alignment="center" >
     <stylesheets>
         <URL value="@/css/style.css"/>
     </stylesheets>
 
-    <Label text="login"/>
-    <TextField fx:id="loginField" HBox.hgrow="ALWAYS" promptText="login"/>
-    <Label text="password"/>
-    <PasswordField fx:id="passwordField" HBox.hgrow="ALWAYS" promptText="password"/>
-    <Label text="nickname"/>
-    <TextField fx:id="nicknameField" HBox.hgrow="ALWAYS" promptText="nickname"/>
+    <Label text="New name"/>
+    <TextField fx:id="nameField" HBox.hgrow="ALWAYS" promptText="login"/>
+
     <TextArea fx:id="textArea" VBox.vgrow="ALWAYS"  editable="false" />
 
 
-    <Button text="Registration" onAction="#tryToReg" />
+    <Button text="Change name" onAction="#changeName"/>
 
 
 </VBox>

@@ -32,6 +32,14 @@ public class DBHandler {
         return false;
     }
 
+
+    public void changeName(String oldName, String newName)throws SQLException{
+        psInsert = connection.prepareStatement("UPDATE users SET name =? WHERE name=?;");
+        psInsert.setString(1,newName);
+        psInsert.setString(2,oldName);
+        psInsert.executeUpdate();
+    }
+
     public String getNickname(String login, String password) throws SQLException{
         psInsert = connection.prepareStatement("SELECT nickname FROM users WHERE login=? AND password=?;");
         psInsert.setString(1,login);
