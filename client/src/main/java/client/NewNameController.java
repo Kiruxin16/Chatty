@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 
 public class NewNameController {
@@ -24,9 +25,8 @@ public class NewNameController {
         if(command.equals(Command.CHANGE_NAME_FALIED)){
             textArea.appendText("Никнейм занят\n");
         }else {
-            nameField.clear();
-            textArea.clear();
-            controller.hideNameStage();
+            textArea.appendText("Никнейм успешно изменен\n");
+
         }
     }
 

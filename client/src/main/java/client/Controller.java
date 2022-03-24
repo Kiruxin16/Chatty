@@ -285,9 +285,7 @@ public class Controller implements Initializable {
         }
 
     }
-    public void hideNameStage(){
-        nameStage.hide();
-    }
+
 
     public void tryToReg(ActionEvent actionEvent) {
         if(regStage==null){

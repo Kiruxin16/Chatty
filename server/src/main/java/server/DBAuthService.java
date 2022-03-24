@@ -33,22 +33,30 @@ public class DBAuthService implements AuthService {
     @Override
     public boolean changeName(String oldName,String newName) {
         try {
+            dbHandler.connect();
             dbHandler.changeName(oldName,newName);
             return true;
         }catch (Exception e){
             e.printStackTrace();
             return false;
+        }finally {
+            System.out.println("it works!!");
+            dbHandler.disconnect();
         }
     }
 
     @Override
     public boolean isNameExist(String name) {
         try {
+            dbHandler.connect();
             return dbHandler.isUserExist(name);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        }finally {
+            dbHandler.disconnect();
         }
-        return false;
+
     }
 
     @Override
