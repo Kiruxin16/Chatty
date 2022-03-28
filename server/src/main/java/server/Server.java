@@ -20,7 +20,7 @@ public class Server {
 
     public Server() {
         clients = new CopyOnWriteArrayList<>();
-        authService = new SimpleAuthService();
+        authService = new DBAuthService();
 
         try {
             Server.server = new ServerSocket(PORT);
@@ -99,6 +99,11 @@ public class Server {
     }
 
 
+    public boolean userNameChange(String oldName, String newName) {
+
+        return authService.changeName(oldName, newName);
+
+    }
 
     public boolean isLoginAuthenticated(String login){
         for (ClientHandler c:clients){

@@ -15,6 +15,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -44,6 +45,8 @@ public class Controller implements Initializable {
     public HBox textPanel;
     @FXML
     public ListView<String> clientList;
+    @FXML
+    public VBox leftPanel;
 
 
     private Socket socket;
@@ -59,7 +62,9 @@ public class Controller implements Initializable {
     private String nickname;
     private Stage stage;
     private Stage regStage;
+    private Stage nameStage;
     private RegController regController;
+    private NewNameController newNameController;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -67,8 +72,8 @@ public class Controller implements Initializable {
         authPanel.setManaged(!authenticated);
         textPanel.setVisible(authenticated);
         textPanel.setManaged(authenticated);
-        clientList.setVisible(authenticated);
-        clientList.setManaged(authenticated);
+        leftPanel.setVisible(authenticated);
+        leftPanel.setManaged(authenticated);
 
         if(!authenticated){
             nickname = "";
@@ -153,6 +158,9 @@ public class Controller implements Initializable {
 
                                 });
 
+                            }
+                            if(str.equals(Command.CHANGE_NAME_FALIED) || str.equals(Command.CHANGE_NAME_OK)){
+                                newNameController.result(str);
                             }
                         }else {
                             textArea.appendText(str + "\n");
@@ -252,6 +260,33 @@ public class Controller implements Initializable {
 
     }
 
+
+
+    private void createNameStage(){
+
+        try{
+            FXMLLoader  fxmlLoader = new FXMLLoader(getClass().getResource("/newName.fxml"));
+            Parent root =fxmlLoader.load();
+
+            nameStage=new Stage();
+            nameStage.setTitle("New name");
+            nameStage.setScene(new Scene(root, 400, 200));
+
+            newNameController=fxmlLoader.getController();
+            newNameController.setController(this);
+
+
+            nameStage.initStyle(StageStyle.UTILITY);
+            nameStage.initModality(Modality.APPLICATION_MODAL);
+
+        }catch (IOException e){
+            e.printStackTrace();
+
+        }
+
+    }
+
+
     public void tryToReg(ActionEvent actionEvent) {
         if(regStage==null){
             createRegStage();
@@ -270,7 +305,26 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
+    public void changingName(String nickname){
+        String msg = String.format("%s %s",Command.CHANGE_NAME,nickname);
+
+        if (socket== null|| socket.isClosed()){
+            connect();
+        }
+        try {
+            out.writeUTF(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void setNewName(ActionEvent actionEvent) {
+        if(nameStage==null){
+            createNameStage();
+        }
+        nameStage.show();
+    }
 }

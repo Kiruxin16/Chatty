@@ -85,8 +85,9 @@ public class ClientHandler {
                     }
 
                     //цикл работы
+                    socket.setSoTimeout(0);
                     while (authenticated) {
-                        socket.setSoTimeout(0);
+
                         String str = in.readUTF();
                         if (str.startsWith("/")) {
                             if (str.equals(Command.END)) {
@@ -99,6 +100,21 @@ public class ClientHandler {
                                     continue;
                                 }
                                 server.whisperMsg(this,temp[1],temp[2]);
+
+                            }
+                            if(str.startsWith(Command.CHANGE_NAME)){
+                                String[] temp = str.split(" ",2);
+                                if (temp.length<2){
+                                    continue;
+                                }
+                                if (server.userNameChange(nickname, temp[1])) {
+
+                                    nickname = temp[1];
+                                    server.broadcastClientList();
+                                    sendMsg(Command.CHANGE_NAME_OK);
+                                }else {
+                                    sendMsg(Command.CHANGE_NAME_FALIED);
+                                }
 
                             }
                         } else {

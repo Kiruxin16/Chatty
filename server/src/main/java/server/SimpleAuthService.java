@@ -16,6 +16,11 @@ public class SimpleAuthService implements AuthService {
         }
     }
 
+    @Override
+    public boolean changeName(String oldname,String newName) {
+        return false;
+    }
+
     private List<UserData> users;
 
     public SimpleAuthService() {
