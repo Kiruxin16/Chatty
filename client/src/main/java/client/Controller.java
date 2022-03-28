@@ -21,12 +21,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -65,6 +65,7 @@ public class Controller implements Initializable {
     private Stage nameStage;
     private RegController regController;
     private NewNameController newNameController;
+    private FileInputStream chatLog;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -127,6 +128,11 @@ public class Controller implements Initializable {
                             if (str.startsWith(Command.AUTH_OK)) {
                                 nickname = str.split(" ")[1];
                                 setAuthenticated(true);
+
+                                chatLog =new FileInputStream(createLogFile());
+                                chatLog.read();
+
+
                                 break;
 
                             }
@@ -141,6 +147,7 @@ public class Controller implements Initializable {
                     }
 
                     //цикл работы
+
                     while (authenticated) {
                         String str = in.readUTF();
                         if (str.startsWith("/")) {
@@ -219,7 +226,14 @@ public class Controller implements Initializable {
         }
     }
 
-
+    private String createLogFile() throws IOException {
+        String path =String.format("client/clientLogs/%s.txt",loginField.getText().trim());
+        File log = new File(path);
+        if(!log.exists()){
+            log.createNewFile();
+        }
+        return path;
+    }
 
     private void setTitle(String nickname){
         String title;
@@ -335,4 +349,7 @@ public class Controller implements Initializable {
         }
         nameStage.show();
     }
+
+
+
 }

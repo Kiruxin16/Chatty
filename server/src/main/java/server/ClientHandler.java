@@ -53,7 +53,7 @@ public class ClientHandler {
                                 if (newNick != null) {
                                     if (!server.isLoginAuthenticated(login)) {
                                         nickname = newNick;
-                                        sendMsg(Command.AUTH_OK+" " + nickname);
+                                        sendMsg(Command.AUTH_OK+" "+ nickname);
                                         authenticated = true;
                                         server.subscribe(this);
                                         break;
