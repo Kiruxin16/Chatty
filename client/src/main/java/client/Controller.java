@@ -218,6 +218,9 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
     }
+
+
+
     private void setTitle(String nickname){
         String title;
         if(nickname.equals("")){
@@ -283,6 +286,11 @@ public class Controller implements Initializable {
             e.printStackTrace();
 
         }
+
+    }
+
+    public void closeNameWindow(){
+        Platform.runLater(() -> nameStage.close());
 
     }
 
