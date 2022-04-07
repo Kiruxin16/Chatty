@@ -4,10 +4,14 @@ import constants.Command;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class ClientHandler {
     private Server server;
@@ -21,8 +25,20 @@ public class ClientHandler {
     private String nickname;
     private String login;
 
+    private static final Logger logger = Logger.getLogger(server.ClientHandler.class.getName());
+    private static LogManager logManager;
+    static {
+        logManager=LogManager.getLogManager();
+    }
+
 
     public ClientHandler(Server server, Socket socket, ExecutorService service) {
+
+        try {
+            logManager.readConfiguration(new FileInputStream("logging.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         try{
 
@@ -63,6 +79,7 @@ public class ClientHandler {
                                     } else {
                                         sendMsg("Учетная запись уже используется.");
 
+
                                     }
                                 } else {
                                     sendMsg("Логин / пароль не верны.");
@@ -76,6 +93,7 @@ public class ClientHandler {
                                 }
                                 if(server.getAuthService().registration(token[1],token[2],token[3])){
                                     sendMsg(Command.REG_OK);
+                                    logger.log(Level.INFO,String.format("Зарегистрирован новый пользователь с логином %s",token[1]));
                                 } else{
                                     sendMsg(Command.REG_FAILED);
                                 }
@@ -111,7 +129,7 @@ public class ClientHandler {
                                     continue;
                                 }
                                 if (server.userNameChange(nickname, temp[1])) {
-
+                                    logger.log(Level.INFO,String.format("Пользователь %s сменил имя на %s",nickname,temp[1]));
                                     nickname = temp[1];
                                     server.broadcastClientList();
                                     sendMsg(Command.CHANGE_NAME_OK);
@@ -122,18 +140,20 @@ public class ClientHandler {
                             }
                         } else {
                             server.broadcastMsg(this, str);
+                            logger.log(Level.FINE,String.format("Пользователь %s отправил сообщение",nickname));
                         }
 
 
                     }
                 } catch (SocketTimeoutException e){
+                    logger.log(Level.INFO,String.format("Отключение по таймауту"));
                     sendMsg(Command.END);
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     server.unsubscribe(this);
-                    System.out.println("Client disconnected");
+                    logger.log(Level.INFO,"client disconnected");
                     try {
                         socket.close();
                     } catch (IOException e) {

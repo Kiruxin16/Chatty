@@ -2,6 +2,7 @@ package server;
 
 import constants.Command;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,6 +10,9 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Server {
@@ -21,29 +25,44 @@ public class Server {
     private List<ClientHandler> clients;
     private AuthService authService;
 
+    private static LogManager logManager;
+    static {
+        logManager = LogManager.getLogManager();
+    }
+
 
 
     public Server() {
+
+        try {
+            logManager.readConfiguration(new FileInputStream("logging.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         clients = new CopyOnWriteArrayList<>();
         authService = new DBAuthService();
 
         try {
             Server.server = new ServerSocket(PORT);
-            System.out.println("server started");
+            logger.log(Level.INFO,"server started");
 
 
             while (true) {
                 socket = server.accept();
-                System.out.println("Client connected");
+                logger.log(Level.INFO,"Client connected");
                 new ClientHandler(this,socket,service);
-            }
+           }
 
 
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE,"Ошибка сервера",e);
         }finally {
+            for(Handler h:logger.getHandlers()){
+                h.close();
+            }
             service.shutdown();
             try {
                 socket.close();

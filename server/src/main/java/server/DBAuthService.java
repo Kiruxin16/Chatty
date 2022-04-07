@@ -40,7 +40,7 @@ public class DBAuthService implements AuthService {
             e.printStackTrace();
             return false;
         }finally {
-            System.out.println("it works!!");
+
             dbHandler.disconnect();
         }
     }
@@ -68,7 +68,7 @@ public class DBAuthService implements AuthService {
         }catch (Exception e){
             return false;
         }finally {
-            System.out.println("its alive!!");
+
             dbHandler.disconnect();
         }
 
