@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class Server {
+    private static final Logger logger = Logger.getLogger(server.Server.class.getName());
     public static ServerSocket server;
     public static Socket socket;
     public static final int PORT = 8189;
