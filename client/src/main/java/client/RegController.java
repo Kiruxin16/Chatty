@@ -52,6 +52,7 @@ public class RegController  {
         if(command.equals(Command.REG_OK)){
             textArea.appendText("Регистрация прошла успешно\n");
         }else{
+
             textArea.appendText("Логин или никнэйм заняты\n");
         }
     }

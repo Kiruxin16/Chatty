@@ -26,6 +26,7 @@ public class NewNameController {
             textArea.appendText("Никнейм занят\n");
         }else {
             textArea.appendText("Никнейм успешно изменен\n");
+            controller.closeNameWindow();
 
         }
     }

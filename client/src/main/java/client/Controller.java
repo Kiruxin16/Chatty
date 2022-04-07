@@ -3,7 +3,6 @@ package client;
 import constants.Command;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,14 +18,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -65,6 +63,8 @@ public class Controller implements Initializable {
     private Stage nameStage;
     private RegController regController;
     private NewNameController newNameController;
+    private BufferedOutputStream logWriter;
+    private String logFilePath;
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
@@ -127,6 +127,20 @@ public class Controller implements Initializable {
                             if (str.startsWith(Command.AUTH_OK)) {
                                 nickname = str.split(" ")[1];
                                 setAuthenticated(true);
+                                List<String> lastLog = createLogFile();
+                                if(lastLog.size()>100){
+                                    lastLog=lastLog.subList(lastLog.size()-101,lastLog.size());
+                                }
+
+                                StringBuilder strs=new StringBuilder("");
+                                for (String s:lastLog) {
+                                     strs.append(s+"\n");
+                                }
+                                textArea.appendText(strs.toString());
+
+
+
+
                                 break;
 
                             }
@@ -141,6 +155,7 @@ public class Controller implements Initializable {
                     }
 
                     //цикл работы
+                    logWriter =new BufferedOutputStream(new FileOutputStream(logFilePath,true));
                     while (authenticated) {
                         String str = in.readUTF();
                         if (str.startsWith("/")) {
@@ -164,13 +179,17 @@ public class Controller implements Initializable {
                             }
                         }else {
                             textArea.appendText(str + "\n");
+                            logWriter.write((str+"\n").getBytes());
                         }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     setAuthenticated(false);
+
                     try {
+                        textArea.clear();
+                        logWriter.close();
                         socket.close();
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -218,6 +237,15 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
     }
+
+    private List<String> createLogFile() throws IOException {
+        logFilePath =String.format("client/clientLogs/%s.txt",loginField.getText().trim());
+        if(!Files.exists(Paths.get(logFilePath))){
+            Files.createFile(Paths.get(logFilePath));
+        }
+        return Files.readAllLines(Paths.get(logFilePath));
+    }
+
     private void setTitle(String nickname){
         String title;
         if(nickname.equals("")){
@@ -286,6 +314,11 @@ public class Controller implements Initializable {
 
     }
 
+    public void closeNameWindow(){
+        Platform.runLater(() -> nameStage.close());
+
+    }
+
 
     public void tryToReg(ActionEvent actionEvent) {
         if(regStage==null){
@@ -327,4 +360,7 @@ public class Controller implements Initializable {
         }
         nameStage.show();
     }
+
+
+
 }
